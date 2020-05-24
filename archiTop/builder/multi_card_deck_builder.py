@@ -1,27 +1,21 @@
-"""Sourcefile containing deck builder class for TableTop"""
+"""Sourcefile containing deck builder class for decks with multiple cards"""
 from collections import OrderedDict
 from copy import deepcopy
 from typing import List
 
+from base_classes import DeckBuilder
 from data_types import Card
 from resources import (card_asset_template, card_deck_template,
                        card_template)
 
 
-class CardDeckBuilder:
+class MultiCardDeckBuilder(DeckBuilder):
     """Class to construct card_deck, contained in final TableTop asset"""
     card_deck_json = deepcopy(card_deck_template)
 
-    current_card_id = 100
-    current_card_asset_id = 1
-
-    card_back_url = 'https://www.frogtown.me/images/gatherer/CardBack.jpg'
     contained_objects = []
     deck_ids = []
     custom_deck = OrderedDict()
-
-    def __init__(self, cards: List[Card]):
-        self.cards = cards
 
     def __repr__(self):
         unique_cards = len(set(self.deck_ids))
@@ -58,5 +52,6 @@ class CardDeckBuilder:
         self.card_deck_json['ContainedObjects'] = self.contained_objects
         self.card_deck_json['DeckIDs'] = self.deck_ids
         self.card_deck_json['CustomDeck'] = self.custom_deck
+        self.card_deck_json['Transform']['rotZ'] = 180 if self.hidden else 0
 
         return self.card_deck_json

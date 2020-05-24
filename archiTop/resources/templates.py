@@ -17,7 +17,7 @@ card_deck_template = {
     "posY": 1,
     "posZ": 0,
     "rotX": 0,
-    "rotY": 180,
+    "rotY": 0,
     "rotZ": 180,
     "scaleX": 1,
     "scaleY": 1,
@@ -29,15 +29,15 @@ card_deck_template = {
 # cardID should be ascending
 # cards with quantity > 1 require multiple entries with the same card id
 card_template = {
-  "CardID": None,
   "Name": "Card",
+  "CardID": None,
   "Nickname": None,
   "Transform": {
     "posX": 0,
     "posY": 0,
     "posZ": 0,
     "rotX": 0,
-    "rotY": 180,
+    "rotY": 0,
     "rotZ": 180,
     "scaleX": 1,
     "scaleY": 1,
