@@ -18,8 +18,9 @@ class ArchidektFetcher(DeckFetcher):
         name = card_data['oracleCard']['name']
         image_url = self.image_url % (edition_code, uid)
         quantity = card['quantity']
+        commander = card['category'] == 'Commander'
 
-        return Card(name, image_url, quantity)
+        return Card(name, image_url, quantity, commander)
 
     @staticmethod
     def _parse_card_data(raw_deck_data) -> List[dict]:

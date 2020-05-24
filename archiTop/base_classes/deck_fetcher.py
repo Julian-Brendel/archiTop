@@ -35,6 +35,9 @@ class DeckFetcher(ABC):
 
         self.cards = [self._parse_single_card(card) for card in filtered_card_data]
 
+        # sort cards based on commander property
+        self.cards = list(sorted(self.cards, key=lambda card: card.commander, reverse=True))
+
         return Deck(self.cards, deck_name, thumbnail)
 
     @abstractmethod
