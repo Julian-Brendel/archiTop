@@ -1,36 +1,34 @@
 """Templates for TableTop deck creation"""
 
+# template for the final json to be imported into tabletop
 final_deck_template = {
-  "ObjectStates": [
-    {
-      "Name": "DeckCustom",
-      "ContainedObjects": [],
-      "DeckIDs": [],
-      "CustomDeck": {},
-      "Transform": {
-        "posX": 0,
-        "posY": 1,
-        "posZ": 0,
-        "rotX": 0,
-        "rotY": 180,
-        "rotZ": 180,
-        "scaleX": 1,
-        "scaleY": 1,
-        "scaleZ": 1
-      }
-    }
-  ]
+  "ObjectStates": []  # <-- card_deck_templates go here
 }
 
-custom_deck_template = {
-  "FaceURL": None,
-  "BackURL": "https://www.frogtown.me/images/gatherer/CardBack.jpg",
-  "NumHeight": 1,
-  "NumWidth": 1,
-  "BackIsHidden": True
+# template for each deck of cards in the tabletop asset (I.e: MainBoard, SideBoard, Tokens)
+card_deck_template = {
+  "Name": "DeckCustom",
+  "ContainedObjects": [],  # <-- card_templates go here
+  "DeckIDs": [],  # <-- all cardID's from card_templates go here in order
+  "CustomDeck": {},  # <-- card_asset_templates go here.
+  # Notation is {"1": <card_asset_template>, "2": <>...}, same ordering as card_templates
+  "Transform": {
+    "posX": 0,
+    "posY": 1,
+    "posZ": 0,
+    "rotX": 0,
+    "rotY": 180,
+    "rotZ": 180,
+    "scaleX": 1,
+    "scaleY": 1,
+    "scaleZ": 1
+  }
 }
 
-contained_objects_template = {
+# template for each card in the deck
+# cardID should be ascending
+# cards with quantity > 1 require multiple entries with the same card id
+card_template = {
   "CardID": None,
   "Name": "Card",
   "Nickname": None,
@@ -45,4 +43,14 @@ contained_objects_template = {
     "scaleY": 1,
     "scaleZ": 1
   }
+}
+
+# template for card assets (back and front image)
+# one entry for each unique card
+card_asset_template = {
+  "FaceURL": None,
+  "BackURL": None,
+  "NumHeight": 1,
+  "NumWidth": 1,
+  "BackIsHidden": True
 }

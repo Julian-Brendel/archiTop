@@ -1,11 +1,10 @@
 import argparse
-import json
 from typing import List
 
+from builder.final_deck_builder import FinalDeckBuilder
+from config import default_deck_name
 from data_types import Card
 from deck_fetcher import ArchidektFetcher
-from config import default_deck_name
-from deck_construction import construct_deck
 
 # parse input
 parser = argparse.ArgumentParser(description='Convert archidekt deck to TableTop')
@@ -22,7 +21,6 @@ fetcher = ArchidektFetcher(args.deckID)
 # fetch deck data, (name, image and quantity of cards)
 cards: List[Card] = fetcher.get_cards()
 
-deck = construct_deck(cards)
-
-# save deck
-json.dump(deck, open(f'{deck_name}.json', 'w'))
+builder = FinalDeckBuilder(deck_name, cards)
+builder.construct_final_deck()
+builder.save_deck()

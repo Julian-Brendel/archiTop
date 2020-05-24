@@ -28,5 +28,3 @@ class ArchidektFetcher(DeckFetcher):
     @staticmethod
     def _validate_single_card(card: dict) -> bool:
         return card['category'] not in ('Maybeboard', 'Sideboard')
-
-
