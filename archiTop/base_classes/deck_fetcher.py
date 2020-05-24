@@ -5,7 +5,7 @@ from typing import List
 
 import requests
 
-from data_types import Card
+from data_types import Card, Deck
 
 
 class DeckFetcher(ABC):
@@ -22,15 +22,20 @@ class DeckFetcher(ABC):
     def _get_raw_deck_data(self) -> dict:
         return requests.get(self.base_url % self.deck_id).json()
 
-    def get_cards(self) -> List[Card]:
-        raw_card_data = self._get_raw_deck_data()
+    def get_deck(self) -> Deck:
+        raw_deck_data = self._get_raw_deck_data()
+
+        deck_name = self._parse_deck_name(raw_deck_data)
+        thumbnail_url = self._parse_deck_thumbnail_url(raw_deck_data)
+
+        thumbnail = requests.get(thumbnail_url).content
 
         filtered_card_data = list(filter(self._validate_single_card,
-                                         self._parse_card_data(raw_card_data)))
+                                         self._parse_card_data(raw_deck_data)))
 
         self.cards = [self._parse_single_card(card) for card in filtered_card_data]
 
-        return self.cards
+        return Deck(self.cards, deck_name, thumbnail)
 
     @abstractmethod
     def _parse_single_card(self, card: dict) -> Card:
@@ -39,6 +44,16 @@ class DeckFetcher(ABC):
     @staticmethod
     @abstractmethod
     def _parse_card_data(raw_deck_data) -> List[dict]:
+        raise NotImplemented
+
+    @staticmethod
+    @abstractmethod
+    def _parse_deck_name(raw_deck_data) -> str:
+        raise NotImplemented
+
+    @staticmethod
+    @abstractmethod
+    def _parse_deck_thumbnail_url(raw_deck_data) -> str:
         raise NotImplemented
 
     @staticmethod
