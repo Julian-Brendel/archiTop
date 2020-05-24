@@ -1,7 +1,9 @@
 import argparse
 import json
+from typing import List
 
-from archidekt import get_archidekt_deck
+from data_types import Card
+from deck_fetcher import ArchidektFetcher
 from config import default_deck_name
 from deck_construction import construct_deck
 
@@ -15,8 +17,10 @@ args = parser.parse_args()
 
 deck_name = args.name if args.name else default_deck_name
 
-# fetch deck data, (name and images of cards)
-cards = get_archidekt_deck(args.deckID)
+fetcher = ArchidektFetcher(args.deckID)
+
+# fetch deck data, (name, image and quantity of cards)
+cards: List[Card] = fetcher.get_cards()
 
 deck = construct_deck(cards)
 

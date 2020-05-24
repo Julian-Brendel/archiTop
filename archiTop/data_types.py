@@ -4,7 +4,6 @@ from copy import deepcopy
 
 @dataclass
 class Card:
-    id: int
     name: str
     image_url: str
     quantity: int
