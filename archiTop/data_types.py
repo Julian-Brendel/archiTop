@@ -1,5 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -16,3 +17,10 @@ class Card:
         new_self.quantity = 1
 
         return [new_self for _ in range(self.quantity)]
+
+
+@dataclass
+class Deck:
+    mainboard: List[Card]
+    name: str
+    thumbnail: bytes

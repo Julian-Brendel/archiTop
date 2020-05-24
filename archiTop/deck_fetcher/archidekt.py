@@ -28,3 +28,11 @@ class ArchidektFetcher(DeckFetcher):
     @staticmethod
     def _validate_single_card(card: dict) -> bool:
         return card['category'] not in ('Maybeboard', 'Sideboard')
+
+    @staticmethod
+    def _parse_deck_name(raw_deck_data) -> str:
+        return raw_deck_data['name']
+
+    @staticmethod
+    def _parse_deck_thumbnail_url(raw_deck_data) -> str:
+        return raw_deck_data['featured']
