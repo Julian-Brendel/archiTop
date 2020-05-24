@@ -1,7 +1,7 @@
 import argparse
 from typing import List
 
-from builder.final_deck_builder import FinalDeckBuilder
+from builder.final_deck_builder import DeckBuilderWrapper
 from data_types import Card
 from deck_fetcher import ArchidektFetcher
 
@@ -21,6 +21,6 @@ deck = fetcher.get_deck()
 # overwrite deckname if optional argument is specified
 deck.name = args.name if args.name else deck.name
 
-builder = FinalDeckBuilder(deck)
+builder = DeckBuilderWrapper(deck)
 builder.construct_final_deck()
 builder.save_deck()
