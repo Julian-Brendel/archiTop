@@ -1,0 +1,1 @@
+from .archidekt import ArchidektFetcher

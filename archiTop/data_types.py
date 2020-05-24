@@ -1,10 +1,9 @@
-from dataclasses import dataclass
 from copy import deepcopy
+from dataclasses import dataclass
 
 
 @dataclass
 class Card:
-    id: int
     name: str
     image_url: str
     quantity: int
