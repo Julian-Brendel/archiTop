@@ -1,8 +1,7 @@
+"""Entry-point for application"""
 import argparse
-from typing import List
 
 from builder.final_deck_builder import DeckBuilderWrapper
-from data_types import Card
 from deck_fetcher import ArchidektFetcher
 
 # parse input

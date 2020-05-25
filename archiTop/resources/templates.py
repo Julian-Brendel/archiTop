@@ -1,11 +1,11 @@
 """Templates for TableTop deck creation"""
 
-# template for the final json to be imported into tabletop
+# template for the final json to be imported into TableTop
 final_deck_template = {
   "ObjectStates": []  # <-- card_deck_templates go here
 }
 
-# template for each deck of cards in the tabletop asset (I.e: MainBoard, SideBoard, Tokens)
+# template for each deck of cards in the TableTop asset (I.e: MainBoard, SideBoard, Tokens)
 card_deck_template = {
   "Name": "DeckCustom",
   "ContainedObjects": [],  # <-- card_templates go here
