@@ -38,5 +38,27 @@ The tool is used via the commandline, runnable with
 Additional usage information can be acquired via the command
 `python archiTop -h`
 
+### Example
+Let's take one of my decks as example.
+Exporting the deck https://archidekt.com/decks/94674#Maximum_Borkdrive is as simple as copying the deck-id
+In this case `94674`
+
+By running the tool with the given deck-id:
+`python archiDekt 94674`, archiTop will export the deck as TableTop Simulator compatible file, alongside the thumbnail used for the deck in Archidekt.
+
+Both files created will be named accordingly to the deck name in Archidekt:
+![Output Example](https://archi-top.s3.eu-west-2.amazonaws.com/architop-output-example.png)
+
+Now all that's left to do is to move the two files into the TableTop Objects folder.
+The directory can vary for your Tabletop installation, based on OS.
+
+You can find the path via the Tabletop Simulator game configurations:
+![Tabletop Objects](https://archi-top.s3.eu-west-2.amazonaws.com/tabletop-save-location.png)
+
+All that's left to do now is move the two files to the mod save location, in my case
+`~/Library/Tabletop\ Simulator/Saves/Saved\ Objects/`
+
+Have fun playing 🎉
+ 
 ## Roadmap
 The current plans for the repository are being tracked via [github issues](https://github.com/Julian-Brendel/archiTop/issues).
