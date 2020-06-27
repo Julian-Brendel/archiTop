@@ -4,9 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+jupyterlab = ">=2.1"
+jupyter = ">=1.0"
 
 [packages]
-requests = "*"
+requests = ">=2.24"
 
 [requires]
 python_version = "3.8"
