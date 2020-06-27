@@ -1,7 +1,7 @@
 """Entry-point for application"""
 import argparse
 
-from builder.final_deck_builder import DeckBuilderWrapper
+from deck_builder.final_deck_builder import DeckBuilderWrapper
 from deck_fetcher import ArchidektFetcher
 
 # parse input

@@ -5,7 +5,10 @@ from typing import List
 
 import requests
 
+from config import getLogger
 from data_types import Card, Deck
+
+logger = getLogger(__name__)
 
 
 class DeckFetcher(ABC):
@@ -31,6 +34,7 @@ class DeckFetcher(ABC):
         Returns:
             Deck information in json format
         """
+        logger.debug('Downloading deck <%s>', self.deck_id)
         return requests.get(self.base_url % self.deck_id).json()
 
     def get_deck(self) -> Deck:
@@ -47,7 +51,7 @@ class DeckFetcher(ABC):
         thumbnail = requests.get(thumbnail_url).content
 
         filtered_mainboard_card_data = list(filter(self._validate_single_card_mainboard,
-                                         self._parse_card_data(raw_deck_data)))
+                                                   self._parse_card_data(raw_deck_data)))
 
         self.mainboard_cards = [self._parse_single_card(card) for card in
                                 filtered_mainboard_card_data]

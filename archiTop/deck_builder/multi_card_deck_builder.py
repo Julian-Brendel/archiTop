@@ -1,7 +1,6 @@
 """Sourcefile containing deck builder class for decks with multiple cards"""
 from collections import OrderedDict
 from copy import deepcopy
-from typing import List
 
 from base_classes import DeckBuilder
 from data_types import Card
