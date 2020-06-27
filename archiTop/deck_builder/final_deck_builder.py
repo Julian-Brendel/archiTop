@@ -1,12 +1,17 @@
 """Sourcefile containing final deck builder class for TableTop"""
 import json
+import sys
 from copy import deepcopy
+from pathlib import Path
 from typing import List, Optional
 
-from builder.multi_card_deck_builder import MultiCardDeckBuilder
-from builder.single_card_deck_builder import SingleCardDeckBuilder
+from config import getLogger, load_config
 from data_types import Card, Deck
 from resources import final_deck_template
+from .multi_card_deck_builder import MultiCardDeckBuilder
+from .single_card_deck_builder import SingleCardDeckBuilder
+
+logger = getLogger(__name__)
 
 
 class DeckBuilderWrapper:
@@ -60,10 +65,22 @@ class DeckBuilderWrapper:
         """Saves deck and thumbnail to current working directory.
         Filename is determined by the chosen deck name.
         """
+        deck_name = f'{self.deck.name}.json'
+        thumbnail_name = f'{self.deck.name}.png'
+
+        if sys.platform == 'darwin':  # client is using mac os
+            logger.debug('Saving deck to tabletop location')
+            table_top_save_location = load_config()['EXPORT']['MAC']
+            export_location = Path(Path.home(), table_top_save_location)
+
+        else:
+            logger.debug('Saving deck to current directory')
+            export_location = ''
+
         # save deck json
-        json.dump(self.final_deck_json, open(f'{self.deck.name}.json', 'w'))
+        json.dump(self.final_deck_json, open(Path(export_location, deck_name), 'w'))
         # save deck thumbnail
-        with open(f'{self.deck.name}.png', 'wb') as file:
+        with open(Path(export_location, thumbnail_name), 'wb') as file:
             file.write(self.deck.thumbnail)
 
     @staticmethod
@@ -86,7 +103,7 @@ class DeckBuilderWrapper:
         elif len(card_list) == 1:
             builder = SingleCardDeckBuilder(card_list, hidden)
         else:
-            print('passed card list is empty')
+            logger.warning('Passed card list is empty')
             return None
 
         return builder.create_deck()
