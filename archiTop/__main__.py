@@ -8,18 +8,19 @@ from deck_fetcher import ArchidektFetcher
 parser = argparse.ArgumentParser(description='Convert archidekt deck to TableTop')
 parser.add_argument('deckID',
                     help='Archidekt deck-ID to convert')
-parser.add_argument("-n", '--name', type=str,
-                    help="Optional deckname to overwrite the archidekt deckname")
+parser.add_argument('-n', '--name', type=str,
+                    help='Optional deckname to overwrite the archidekt deckname')
+parser.add_argument('-c', '-custom', action='store_true',
+                    help='Use custom card-back, configured in config.ini')
 args = parser.parse_args()
 
 fetcher = ArchidektFetcher(args.deckID)
-
 # fetch deck data, (name, image and quantity of cards)
 deck = fetcher.get_deck()
 
 # overwrite deckname if optional argument is specified
 deck.name = args.name if args.name else deck.name
 
-builder = DeckBuilderWrapper(deck)
+builder = DeckBuilderWrapper(deck, args.c)
 builder.construct_final_deck()
 builder.save_deck()

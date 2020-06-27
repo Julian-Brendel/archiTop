@@ -20,13 +20,18 @@ class DeckBuilderWrapper:
 
     card_decks = []
 
-    def __init__(self, deck: Deck):
+    def __init__(self,
+                 deck: Deck,
+                 custom_back=False):
         """Initializes deck builder wrapper with deck of cards.
 
         Args:
             deck:   Deck including cards contained and additional deck information
         """
         self.deck = deck
+        if custom_back:
+            logger.debug('Using custom card-back <%s>', load_config()['DECK']['CUSTOM_CARDBACK_URL'])
+        self.custom_back = custom_back
 
     def construct_final_deck(self):
         """Constructs the final asset json for TableTop.
@@ -83,8 +88,7 @@ class DeckBuilderWrapper:
         with open(Path(export_location, thumbnail_name), 'wb') as file:
             file.write(self.deck.thumbnail)
 
-    @staticmethod
-    def _construct_card_deck(card_list: List[Card], hidden=True) -> Optional[dict]:
+    def _construct_card_deck(self, card_list: List[Card], hidden=True) -> Optional[dict]:
         """Chooses DeckBuilder based on amount of amount of cards passed.
 
         Chooses SingleCardDeckBuilder when card list contains a single card.
@@ -99,9 +103,9 @@ class DeckBuilderWrapper:
             Result from deck builder or None when List is empty
         """
         if len(card_list) > 1:
-            builder = MultiCardDeckBuilder(card_list, hidden)
+            builder = MultiCardDeckBuilder(card_list, hidden, self.custom_back)
         elif len(card_list) == 1:
-            builder = SingleCardDeckBuilder(card_list, hidden)
+            builder = SingleCardDeckBuilder(card_list, hidden, self.custom_back)
         else:
             logger.warning('Passed card list is empty')
             return None

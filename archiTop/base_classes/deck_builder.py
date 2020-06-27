@@ -4,16 +4,21 @@ from typing import List
 
 from data_types import Card
 
+from config import load_config, getLogger
 
+logger = getLogger(__name__)
+
+
+# todo: add customization option
 class DeckBuilder(ABC):
     """Abstract baseclass to construct TableTop deck assets"""
 
     current_card_id = 100
     current_card_asset_id = 1
 
-    card_back_url = 'https://www.frogtown.me/images/gatherer/CardBack.jpg'
-
-    def __init__(self, cards: List[Card], hidden=True):
+    def __init__(self, cards: List[Card],
+                 hidden=True,
+                 custom_back=False):
         """Initializes deck builder with list of cards.
 
         Args:
@@ -23,6 +28,13 @@ class DeckBuilder(ABC):
         """
         self.cards = cards
         self.hidden = hidden
+
+        config = load_config()
+        if custom_back:
+            self.card_back_url = config['DECK']['CUSTOM_CARDBACK_URL']
+
+        else:
+            self.card_back_url = config['DECK']['DEFAULT_CARDBACK_URL']
 
     @abstractmethod
     def create_deck(self) -> dict:
