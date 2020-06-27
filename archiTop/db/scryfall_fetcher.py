@@ -38,6 +38,3 @@ def syncronize_scryfall_data():
         update_scryfall_data(current_url)
 
     logger.info('Scryfall data is up to date 🎉')
-
-
-syncronize_scryfall_data()
