@@ -35,6 +35,16 @@ def _load_scryfall_id_index(file_path: Path):
     return {entry['id']: entry for entry in data}
 
 
+@lru_cache
+def _load_scryfall_set_name_index(file_path: Path):
+    data = _load_scryfall_data(file_path)
+    index = {}
+    for entry in data:
+        index[entry['set']] = index.get(entry['set'], {})
+        index[entry['set']][entry['name']] = entry
+    return index
+
+
 def load_scryfall_name_index():
     if _get_data_path() is None:
         logger.warning('No scryfall data present, downloading now')
@@ -51,3 +61,12 @@ def load_scryfall_id_index():
 
     file_path = _get_data_path()
     return _load_scryfall_id_index(file_path)
+
+
+def load_scryfall_set_name_index():
+    if _get_data_path() is None:
+        logger.warning('No scryfall data present, downloading now')
+        syncronize_scryfall_data()
+
+    file_path = _get_data_path()
+    return _load_scryfall_set_name_index(file_path)

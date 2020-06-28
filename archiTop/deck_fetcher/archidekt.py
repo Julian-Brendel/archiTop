@@ -22,9 +22,11 @@ class ArchidektFetcher(DeckFetcher):
 
         name = card_data['oracleCard']['name']
         quantity = card['quantity']
+
+        edition_code = card_data['edition']['editioncode']
         commander = card['category'] == 'Commander'
 
-        return RawCard(name, quantity, commander)
+        return RawCard(name, quantity, edition_code, commander)
 
     @staticmethod
     def _parse_card_data(raw_deck_data: dict) -> List[dict]:
