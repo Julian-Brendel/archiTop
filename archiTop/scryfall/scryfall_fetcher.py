@@ -1,13 +1,14 @@
-"""Sourcefile fetching card information from scryfall"""
+"""Sourcefile containing functionality to fetch card information from scryfall"""
 import json
 from pathlib import Path
 
 import requests
 
-from config import ROOT_PATH, getLogger
+from config import ROOT_PATH, getLogger, load_config
 
 
 logger = getLogger(__name__)
+conf = load_config()['SCRYFALL']
 
 
 def _extract_file_name(url: str) -> str:
@@ -15,8 +16,9 @@ def _extract_file_name(url: str) -> str:
 
 
 def get_bulk_url() -> str:
-    request = requests.get('https://api.scryfall.com/bulk-data').json()
-    oracle_cards = list(filter(lambda x: x['type'] == 'oracle_cards', request['data']))[0]
+    request = requests.get(conf['BULK_META_URL']).json()
+    oracle_cards = list(filter(lambda x: x['type'] == conf['BULK_DATA_IDENTIFIER'],
+                               request['data']))[0]
 
     return oracle_cards['download_uri']
 
@@ -32,7 +34,7 @@ def syncronize_scryfall_data():
     if not Path(ROOT_PATH, file_name).exists():
         logger.info('Re-syncing scryfall data...')
         # delete outdated scryfall data
-        for path in ROOT_PATH.glob('oracle-cards*.json'):
+        for path in ROOT_PATH.glob(conf['BULK_DATA_FILE_PATTERN']):
             path.unlink()
 
         update_scryfall_data(current_url)
