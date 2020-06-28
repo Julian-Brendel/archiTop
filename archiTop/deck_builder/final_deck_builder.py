@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import List, Optional
 
 from config import getLogger, load_config
-from data_types import Card, Deck
 from resources import final_deck_template
+from scryfall.data_types import ScryfallCard, ScryfallDeck
 from .multi_card_deck_builder import MultiCardDeckBuilder
 from .single_card_deck_builder import SingleCardDeckBuilder
 
@@ -16,18 +16,17 @@ logger = getLogger(__name__)
 
 class DeckBuilderWrapper:
     """Wrapper class, converting Deck object into TableTop deck asset"""
-    final_deck_json = deepcopy(final_deck_template)
-
-    card_decks = []
-
     def __init__(self,
-                 deck: Deck,
+                 deck: ScryfallDeck,
                  custom_back=False):
         """Initializes deck builder wrapper with deck of cards.
 
         Args:
             deck:   Deck including cards contained and additional deck information
         """
+        self.final_deck_json = deepcopy(final_deck_template)
+        self.card_decks = []
+
         self.deck = deck
         if custom_back:
             logger.debug('Using custom card-back <%s>', load_config()['DECK']['CUSTOM_CARDBACK_URL'])
@@ -41,19 +40,19 @@ class DeckBuilderWrapper:
         mainboard_cards = list(filter(lambda card: not card.commander, self.deck.mainboard))
         commander_cards = list(filter(lambda card: card.commander, self.deck.mainboard))
 
-        # construct mainboard
+        # construct related cards card-deck, including tokens
+        if token_deck := self._construct_card_deck(self.deck.related_cards, hidden=False):
+            self.card_decks.append(token_deck)
+
+        # construct mainboard card-deck
         if mainboard_deck := self._construct_card_deck(mainboard_cards):
             self.card_decks.append(mainboard_deck)
 
+        # construct separate card-deck for commander
         if commander_deck := self._construct_card_deck(commander_cards, hidden=False):
             self.card_decks.append(commander_deck)
 
-        # todo: implement
-        # construct token list
-        if token_deck := None:
-            self.card_decks.append(token_deck)
-
-        # todo: implement
+        # todo: implement sideboard
         # construct sideboard
         if sideboard_deck := None:
             self.card_decks.append(sideboard_deck)
@@ -74,12 +73,12 @@ class DeckBuilderWrapper:
         thumbnail_name = f'{self.deck.name}.png'
 
         if sys.platform == 'darwin':  # client is using mac os
-            logger.debug('Saving deck to tabletop location')
+            logger.debug(f'Saving deck <{deck_name}> to tabletop location')
             table_top_save_location = load_config()['EXPORT']['MAC']
             export_location = Path(Path.home(), table_top_save_location)
 
         else:
-            logger.debug('Saving deck to current directory')
+            logger.debug(f'Saving deck <{deck_name}> to current directory')
             export_location = ''
 
         # save deck json
@@ -88,7 +87,8 @@ class DeckBuilderWrapper:
         with open(Path(export_location, thumbnail_name), 'wb') as file:
             file.write(self.deck.thumbnail)
 
-    def _construct_card_deck(self, card_list: List[Card], hidden=True) -> Optional[dict]:
+    def _construct_card_deck(self, card_list: List[ScryfallCard],
+                             hidden=True) -> Optional[dict]:
         """Chooses DeckBuilder based on amount of amount of cards passed.
 
         Chooses SingleCardDeckBuilder when card list contains a single card.

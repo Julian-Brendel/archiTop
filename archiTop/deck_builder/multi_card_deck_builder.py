@@ -3,25 +3,28 @@ from collections import OrderedDict
 from copy import deepcopy
 
 from base_classes import DeckBuilder
-from data_types import Card
 from resources import (card_asset_template, card_deck_template,
                        card_template)
+from scryfall.data_types import ScryfallCard
 
 
 class MultiCardDeckBuilder(DeckBuilder):
     """"MultiCardDeckBuilder class implementing abstract DeckBuilder class.
     Used for card decks with multiple cards."""
-    card_deck_json = deepcopy(card_deck_template)
 
-    contained_objects = []
-    deck_ids = []
-    custom_deck = OrderedDict()
+    def __init__(self, *args):
+        self.card_deck_json = deepcopy(card_deck_template)
+        self.contained_objects = []
+        self.deck_ids = []
+        self.custom_deck = OrderedDict()
+        super().__init__(*args)
+
 
     def __repr__(self):
         unique_cards = len(set(self.deck_ids))
         return f'CardDeck({len(self.deck_ids)} total cards, {unique_cards} unique cards)'
 
-    def _populate_card_template(self, card: Card):
+    def _populate_card_template(self, card: ScryfallCard):
         """Creates a new TableTop card object and fills information from card class.
         Each card in deck needs one card object, therefore cards with quantity > 1 will be
         duplicated.
@@ -35,7 +38,7 @@ class MultiCardDeckBuilder(DeckBuilder):
         card_json = deepcopy(card_template)
 
         card_json['CardID'] = self.current_card_id
-        card_json['Nickname'] = card.name
+        card_json['Nickname'] = card.tabletop_name
 
         # create one object per quantity
         for _ in range(card.quantity):
@@ -44,7 +47,7 @@ class MultiCardDeckBuilder(DeckBuilder):
 
         self.current_card_id += 100
 
-    def _populate_card_asset_template(self, card: Card):
+    def _populate_card_asset_template(self, card: ScryfallCard):
         """Creates a new TableTop card asset object and fills with information from card class.
         There should only exist on card asset template for each unique card.
         Therefor cards with quantity > 1 do only get one card asset.

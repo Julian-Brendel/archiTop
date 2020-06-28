@@ -2,21 +2,20 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from data_types import Card
-
-from config import load_config, getLogger
+from config import getLogger, load_config
+from scryfall.data_types import ScryfallCard
 
 logger = getLogger(__name__)
 
 
-# todo: add customization option
 class DeckBuilder(ABC):
     """Abstract baseclass to construct TableTop deck assets"""
 
     current_card_id = 100
     current_card_asset_id = 1
 
-    def __init__(self, cards: List[Card],
+    def __init__(self,
+                 cards: List[ScryfallCard],
                  hidden=True,
                  custom_back=False):
         """Initializes deck builder with list of cards.

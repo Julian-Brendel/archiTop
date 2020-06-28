@@ -131,3 +131,6 @@ dmypy.json
 .idea/
 documents/
 *.ipynb
+
+oracle-cards-*.json
+default-cards-*.json

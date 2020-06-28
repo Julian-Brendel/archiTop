@@ -2,15 +2,14 @@
 from typing import List
 
 from base_classes import DeckFetcher
-from data_types import Card
+from data_types import RawCard
 
 
 class ArchidektFetcher(DeckFetcher):
     """ArchidektFetcher class, implementing abstract baseclass DeckFetcher"""
     base_url = 'https://archidekt.com/api/decks/%s/small/'
-    image_url = 'https://storage.googleapis.com/archidekt-card-images/%s/%s_normal.jpg'
 
-    def _parse_single_card(self, card: dict) -> Card:
+    def _parse_single_card(self, card: dict) -> RawCard:
         """Parses single card information from deck service into Card object.
 
         Args:
@@ -21,15 +20,11 @@ class ArchidektFetcher(DeckFetcher):
         """
         card_data = card['card']
 
-        edition_code = card_data['edition']['editioncode']
-        uid = card_data['uid']
-
         name = card_data['oracleCard']['name']
-        image_url = self.image_url % (edition_code, uid)
         quantity = card['quantity']
         commander = card['category'] == 'Commander'
 
-        return Card(name, image_url, quantity, commander)
+        return RawCard(name, quantity, commander)
 
     @staticmethod
     def _parse_card_data(raw_deck_data: dict) -> List[dict]:
