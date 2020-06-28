@@ -6,7 +6,7 @@ from typing import List
 import requests
 
 from config import getLogger
-from data_types import Card, Deck
+from data_types import RawCard, RawDeck
 
 logger = getLogger(__name__)
 
@@ -37,7 +37,7 @@ class DeckFetcher(ABC):
         logger.debug('Downloading deck <%s>', self.deck_id)
         return requests.get(self.base_url % self.deck_id).json()
 
-    def get_deck(self) -> Deck:
+    def get_deck(self) -> RawDeck:
         """Fetches and parses deck information.
 
         Returns:
@@ -56,10 +56,10 @@ class DeckFetcher(ABC):
         self.mainboard_cards = [self._parse_single_card(card) for card in
                                 filtered_mainboard_card_data]
 
-        return Deck(self.mainboard_cards, deck_name, thumbnail)
+        return RawDeck(self.mainboard_cards, deck_name, thumbnail)
 
     @abstractmethod
-    def _parse_single_card(self, card: dict) -> Card:
+    def _parse_single_card(self, card: dict) -> RawCard:
         """Abstractmethod to be implemented by child class.
         Parses single card information from deck service into Card object.
 

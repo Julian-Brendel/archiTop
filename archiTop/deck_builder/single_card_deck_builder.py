@@ -8,7 +8,10 @@ from resources import card_asset_template, card_template
 class SingleCardDeckBuilder(DeckBuilder):
     """SingleCardDeckBuilder class implementing abstract DeckBuilder class.
     Used for card decks with single card."""
-    card_json = deepcopy(card_template)
+
+    def __init__(self, *args):
+        self.card_json = deepcopy(card_template)
+        super().__init__(*args)
 
     def __repr__(self):
         return f'CardDeck({self.cards[0]})'
@@ -22,7 +25,7 @@ class SingleCardDeckBuilder(DeckBuilder):
         card = self.cards[0]
 
         self.card_json['CardID'] = self.current_card_id
-        self.card_json['Nickname'] = card.name
+        self.card_json['Nickname'] = card.tabletop_name
 
         card_asset_json = deepcopy(card_asset_template)
         card_asset_json['FaceURL'] = card.image_url
