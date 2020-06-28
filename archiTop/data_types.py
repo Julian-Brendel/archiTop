@@ -8,7 +8,11 @@ class RawCard:
     One class instance can hold multiple quantities of a single card."""
     name: str                   # unique card name
     quantity: int               # quantity for card
+    editioncode: str = None     # edition code for card
     commander: bool = False     # flag whether card is commander
+
+    def __repr__(self):
+        return f'RawCard({self.quantity: <3}x {self.name} - {self.editioncode})'
 
 
 @dataclass
@@ -18,3 +22,7 @@ class RawDeck:
     mainboard: List[RawCard]  # list containing cards in mainboard
     name: str  # name of deck
     thumbnail: bytes  # image bytes for deck thumbnail
+
+    def __repr__(self):
+        total_cards = sum([card.quantity for card in self.mainboard])
+        return f'RawDeck({total_cards} total cards, {len(self.mainboard)} unique cards)'
