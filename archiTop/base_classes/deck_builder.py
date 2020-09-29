@@ -25,7 +25,7 @@ class DeckBuilder(ABC):
             hidden:     Determines if deck of cards is facing back up
                         Defaults to true
         """
-        self.cards = cards
+        self.cards = list(cards)
         self.hidden = hidden
 
         config = load_config()
