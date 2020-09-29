@@ -24,7 +24,7 @@ class ArchidektFetcher(DeckFetcher):
         quantity = card['quantity']
 
         edition_code = card_data['edition']['editioncode']
-        commander = card['category'] == 'Commander'
+        commander = card['category'] == 'Commander' or 'Commander' in card.get('categories', ())
 
         return RawCard(name, quantity, edition_code, commander)
 
@@ -73,4 +73,9 @@ class ArchidektFetcher(DeckFetcher):
         Returns:
             True when card is contained in mainboard, False otherwise
         """
-        return card['category'] not in ('Maybeboard', 'Sideboard')
+        blacklist = ('Maybeboard', 'Sideboard')
+        category_check = card['category'] not in blacklist
+        categories_checks = not any([blacklist_entry in card.get('categories', ())
+                                     for blacklist_entry in blacklist])
+
+        return category_check and categories_checks
