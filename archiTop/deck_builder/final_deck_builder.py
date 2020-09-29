@@ -73,12 +73,12 @@ class DeckBuilderWrapper:
         thumbnail_name = f'{self.deck.name}.png'
 
         if sys.platform == 'darwin':  # client is using mac os
-            logger.debug(f'Saving deck <{deck_name}> to tabletop location')
+            logger.debug(f'Saving deck <{self.deck.name}> to tabletop location')
             table_top_save_location = load_config()['EXPORT']['MAC']
             export_location = Path(Path.home(), table_top_save_location)
 
         else:
-            logger.debug(f'Saving deck <{deck_name}> to current directory')
+            logger.debug(f'Saving deck <{self.deck.name}> to current directory')
             export_location = ''
 
         # save deck json
