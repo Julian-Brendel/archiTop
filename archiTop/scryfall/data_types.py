@@ -7,13 +7,14 @@ from .scryfall_loader import load_scryfall_id_index
 
 class ScryfallCard:
     """Class containing information for scryfall card object."""
-    related_cards: ()
+    related_cards = set()
 
     def __init__(self,
                  scryfall_card_data: dict,
                  resolve_tokens=True,
                  quantity=1,
-                 commander=False):
+                 commander=False,
+                 card_side=0):
         self.id_index = load_scryfall_id_index()
 
         self.commander = commander
@@ -28,8 +29,22 @@ class ScryfallCard:
 
         self.id = scryfall_card_data['id']
 
-        # extract image_url, choosing high rez if available
-        image_uris = scryfall_card_data['image_uris']
+        if 'image_uris' in scryfall_card_data:
+            # extract image_url, choosing high rez if available
+            image_uris = scryfall_card_data['image_uris']
+
+        elif 'card_faces' in scryfall_card_data:  # card is a double sized card
+            image_uris = scryfall_card_data['card_faces'][card_side]['image_uris']
+
+            if card_side == 0:
+                self.related_cards = {ScryfallCard(self.id_index[scryfall_card_data['id']],
+                                                   resolve_tokens=False,
+                                                   card_side=1)}
+
+
+        else:
+            raise Exception('Unknown card-type encountered')
+
         if 'large' in image_uris:
             self.image_url = image_uris['large']
         else:
@@ -39,18 +54,18 @@ class ScryfallCard:
             related_objects = scryfall_card_data.get('all_parts', ())
 
             related_tokens = list(
-                filter(lambda related_object: related_object['component'] == 'token',
-                       related_objects))
+                    filter(lambda related_object: related_object['component'] == 'token',
+                           related_objects))
             related_meld_cards = list(
-                filter(lambda related_object: related_object['component'] == 'meld_result',
-                       related_objects))
+                    filter(lambda related_object: related_object['component'] == 'meld_result',
+                           related_objects))
 
             related_ids = set([related_object['id'] for related_object in
                                related_tokens + related_meld_cards])
 
-            self.related_cards = set([ScryfallCard(self.id_index[related_id],
-                                                   resolve_tokens=False)
-                                      for related_id in related_ids])
+            self.related_cards |= {ScryfallCard(self.id_index[related_id],
+                                                resolve_tokens=False)
+                                   for related_id in related_ids}
 
     def __repr__(self):
         commander_identifier = '[Commander]' if self.commander else ''
