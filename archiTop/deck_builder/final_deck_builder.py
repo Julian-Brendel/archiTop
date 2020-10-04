@@ -24,7 +24,8 @@ class DeckBuilderWrapper:
         """Initializes deck builder wrapper with deck of cards.
 
         Args:
-            deck:   Deck including cards contained and additional deck information
+            deck:               Deck including cards contained and additional deck information
+            custom_back_url:    Url for image to replace the default mtg card-back
         """
         self.final_deck_json = deepcopy(final_deck_template)
         self.card_decks = []
@@ -67,21 +68,31 @@ class DeckBuilderWrapper:
 
         self.final_deck_json['ObjectStates'] = self.card_decks
 
-    def save_deck(self):
-        """Saves deck and thumbnail to current working directory.
+    def save_deck(self, export_location: str = None):
+        """Saves deck and thumbnail.
         Filename is determined by the chosen deck name.
+
+        If system is mac os, output will be saved to the tabletop location,
+        otherwise it will be stored to current directory.
+
+        Args:
+            export_location:    Optional argument to overwrite output location
         """
         deck_name = f'{self.deck.name}.json'
         thumbnail_name = f'{self.deck.name}.png'
 
-        if sys.platform == 'darwin':  # client is using mac os
-            logger.debug(f'Saving deck <{self.deck.name}> to tabletop location')
-            table_top_save_location = load_config()['EXPORT']['MAC']
-            export_location = Path(Path.home(), table_top_save_location)
+        if export_location:
+            logger.debug(f'Saving deck <{self.deck.name}> to passed location {export_location}')
 
         else:
-            logger.debug(f'Saving deck <{self.deck.name}> to current directory')
-            export_location = ''
+            if sys.platform == 'darwin':  # client is using mac os
+                logger.debug(f'Saving deck <{self.deck.name}> to tabletop location')
+                table_top_save_location = load_config()['EXPORT']['MAC']
+                export_location = Path(Path.home(), table_top_save_location)
+
+            else:
+                logger.debug(f'Saving deck <{self.deck.name}> to current directory')
+                export_location = ''
 
         # save deck json
         json.dump(self.final_deck_json, open(Path(export_location, deck_name), 'w'))
