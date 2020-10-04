@@ -1,8 +1,8 @@
 """Sourcefile containing deck builder class for decks with one card"""
 from copy import deepcopy
 
-from base_classes import DeckBuilder
-from resources import card_asset_template, card_template
+from archiTop.base_classes import DeckBuilder
+from archiTop.resources import card_asset_template, card_template
 
 
 class SingleCardDeckBuilder(DeckBuilder):

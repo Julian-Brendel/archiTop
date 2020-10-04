@@ -2,9 +2,9 @@
 from functools import reduce
 from typing import List, Tuple
 
-from data_types import RawCard, RawDeck
-from .scryfall_loader import load_scryfall_name_index, load_scryfall_set_name_index
-from .data_types import ScryfallCard, ScryfallDeck
+from archiTop.data_types import RawCard, RawDeck
+from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
+from archiTop.scryfall.scryfall_loader import load_scryfall_name_index, load_scryfall_set_name_index
 
 
 class ScryfallDeckBuilder:

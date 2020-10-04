@@ -5,8 +5,8 @@ from typing import List
 
 import requests
 
-from config import getLogger
-from data_types import RawCard, RawDeck
+from archiTop.config import getLogger
+from archiTop.data_types import RawCard, RawDeck
 
 logger = getLogger(__name__)
 

@@ -1,25 +1,21 @@
 """Sourcefile containing functionality to load fetched card information from scryfall"""
-import json
+import pickle
 from functools import lru_cache
 from pathlib import Path
 
-from config import ROOT_PATH, getLogger, load_config
-from .scryfall_fetcher import syncronize_scryfall_data
+from archiTop.scryfall import conf, logger, resources_path
+from archiTop.scryfall.scryfall_fetcher import syncronize_scryfall_data
 
 
-logger = getLogger(__name__)
-conf = load_config()['SCRYFALL']
-
-
-def _get_data_path():
-    if scryfall_data := list(ROOT_PATH.glob(conf['BULK_DATA_FILE_PATTERN'])):
+def _get_data_path() -> Path:
+    if scryfall_data := list(resources_path.glob(conf['BULK_DATA_FILE_PATTERN'])):
         return scryfall_data[0]
 
 
 @lru_cache
 def _load_scryfall_data(file_path: Path):
     logger.debug('Loading scryfall data')
-    data = json.load(open(str(file_path), 'r'))
+    data = pickle.load(file_path.open('rb'))
     return data
 
 

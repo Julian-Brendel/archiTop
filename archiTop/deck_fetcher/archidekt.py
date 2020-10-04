@@ -1,8 +1,8 @@
 """Sourcefile containing class to interact with archidekt services"""
 from typing import List
 
-from base_classes import DeckFetcher
-from data_types import RawCard
+from archiTop.base_classes import DeckFetcher
+from archiTop.data_types import RawCard
 
 
 class ArchidektFetcher(DeckFetcher):

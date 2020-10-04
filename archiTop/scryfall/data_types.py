@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from functools import reduce
 from typing import List
 
-from .scryfall_loader import load_scryfall_id_index
+from archiTop.scryfall.scryfall_loader import load_scryfall_id_index
 
 
 class ScryfallCard:

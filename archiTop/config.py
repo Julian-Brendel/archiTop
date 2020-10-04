@@ -3,22 +3,6 @@ import logging
 from pathlib import Path
 
 
-def find_root_path() -> Path:
-    """Finds root path of project by searching for the `src` folder recursively in the parent
-    directories
-
-    Returns:
-        Path to root of project directory
-    """
-
-    path = Path(Path.cwd(), "dummy")
-    while path != path.parent:
-        src_path = Path(path, "archiTop")
-        if src_path.exists():
-            return path
-        path = path.parent
-
-
 def load_config():
     """Creates config-parser, reading the config and returning the read config
 
@@ -26,7 +10,7 @@ def load_config():
         Parsed config
     """
     config = configparser.ConfigParser()
-    config.read(Path(ROOT_PATH, 'archiTop', 'config.ini'))
+    config.read(PACKAGE_ROOT_PATH / 'config.ini')
     return config
 
 
@@ -45,5 +29,5 @@ def getLogger(name: str):
     return logging.getLogger('archiTop.' + name)
 
 
-ROOT_PATH = find_root_path()
+PACKAGE_ROOT_PATH = Path(__file__).parent
 setup_logging()
