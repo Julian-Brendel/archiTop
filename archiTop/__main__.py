@@ -12,8 +12,10 @@ def setup_argparse():
                         help='Archidekt deck-ID to convert')
     parser.add_argument('-n', '--name', type=str,
                         help='Optional deckname to overwrite the archidekt deckname')
-    parser.add_argument('-c', '-custom_back_url', type=str,
+    parser.add_argument('-c', '--custom_back_url', type=str,
                         help='Use custom card-back image url')
+    parser.add_argument('-p', '--path', type=str,
+                        help='Path to write output to')
     return parser.parse_args()
 
 
@@ -29,9 +31,9 @@ def main():
     # enrich deck information with scryfall data (cmc, type_lines etc.)
     scryfall_deck = ScryfallDeckBuilder(deck).construct_deck()
 
-    builder = DeckBuilderWrapper(scryfall_deck, custom_back_url=args.c)
+    builder = DeckBuilderWrapper(scryfall_deck, custom_back_url=args.custom_back_url)
     builder.construct_final_deck()
-    builder.save_deck()
+    builder.save_deck(args.path)
 
 
 if __name__ == '__main__':
