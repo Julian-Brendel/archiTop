@@ -42,27 +42,15 @@ def _load_scryfall_set_name_index(file_path: Path):
 
 
 def load_scryfall_name_index():
-    if _get_data_path() is None:
-        logger.warning('No scryfall data present, downloading now')
-        syncronize_scryfall_data()
-
     file_path = _get_data_path()
     return _load_scryfall_name_index(file_path)
 
 
 def load_scryfall_id_index():
-    if _get_data_path() is None:
-        logger.warning('No scryfall data present, downloading now')
-        syncronize_scryfall_data()
-
     file_path = _get_data_path()
     return _load_scryfall_id_index(file_path)
 
 
 def load_scryfall_set_name_index():
-    if _get_data_path() is None:
-        logger.warning('No scryfall data present, downloading now')
-        syncronize_scryfall_data()
-
     file_path = _get_data_path()
     return _load_scryfall_set_name_index(file_path)
