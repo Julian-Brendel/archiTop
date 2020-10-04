@@ -27,7 +27,6 @@ def update_scryfall_data(url: str):
 def syncronize_scryfall_data():
     current_url = get_bulk_url()
     file_name = _extract_file_name(current_url)
-    print(file_name)
     if not (resources_path / file_name).exists():
         logger.info('Re-syncing scryfall data...')
         # delete outdated scryfall data
@@ -36,4 +35,4 @@ def syncronize_scryfall_data():
 
         update_scryfall_data(current_url)
 
-    logger.info('Scryfall data is up to date 🎉')
+        logger.info('Scryfall data is up to date 🎉')
