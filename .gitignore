@@ -132,5 +132,5 @@ dmypy.json
 documents/
 *.ipynb
 
-oracle-cards-*.json
-default-cards-*.json
+oracle-cards-*
+default-cards-*

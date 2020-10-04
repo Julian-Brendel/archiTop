@@ -5,20 +5,22 @@ from copy import deepcopy
 from pathlib import Path
 from typing import List, Optional
 
-from config import getLogger, load_config
-from resources import final_deck_template
-from scryfall.data_types import ScryfallCard, ScryfallDeck
-from .multi_card_deck_builder import MultiCardDeckBuilder
-from .single_card_deck_builder import SingleCardDeckBuilder
+from archiTop.config import getLogger, load_config
+from archiTop.deck_builder.multi_card_deck_builder import MultiCardDeckBuilder
+from archiTop.deck_builder.single_card_deck_builder import SingleCardDeckBuilder
+from archiTop.resources import final_deck_template
+from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
 
 logger = getLogger(__name__)
 
 
 class DeckBuilderWrapper:
     """Wrapper class, converting Deck object into TableTop deck asset"""
+    custom_back_url = None
+
     def __init__(self,
                  deck: ScryfallDeck,
-                 custom_back=False):
+                 custom_back_url: str = None):
         """Initializes deck builder wrapper with deck of cards.
 
         Args:
@@ -28,9 +30,9 @@ class DeckBuilderWrapper:
         self.card_decks = []
 
         self.deck = deck
-        if custom_back:
-            logger.debug('Using custom card-back <%s>', load_config()['DECK']['CUSTOM_CARDBACK_URL'])
-        self.custom_back = custom_back
+        if custom_back_url:
+            logger.debug('Using custom card-back <%s>', custom_back_url)
+            self.custom_back_url = custom_back_url
 
     def construct_final_deck(self):
         """Constructs the final asset json for TableTop.
@@ -103,9 +105,9 @@ class DeckBuilderWrapper:
             Result from deck builder or None when List is empty
         """
         if len(card_list) > 1:
-            builder = MultiCardDeckBuilder(card_list, hidden, self.custom_back)
+            builder = MultiCardDeckBuilder(card_list, hidden, self.custom_back_url)
         elif len(card_list) == 1:
-            builder = SingleCardDeckBuilder(card_list, hidden, self.custom_back)
+            builder = SingleCardDeckBuilder(card_list, hidden, self.custom_back_url)
         else:
             logger.warning('Passed card list is empty')
             return None

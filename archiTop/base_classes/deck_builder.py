@@ -2,10 +2,11 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from config import getLogger, load_config
-from scryfall.data_types import ScryfallCard
+from archiTop.config import getLogger, load_config
+from archiTop.scryfall.data_types import ScryfallCard
 
 logger = getLogger(__name__)
+config = load_config()
 
 
 class DeckBuilder(ABC):
@@ -17,7 +18,7 @@ class DeckBuilder(ABC):
     def __init__(self,
                  cards: List[ScryfallCard],
                  hidden=True,
-                 custom_back=False):
+                 custom_back_url: str = None):
         """Initializes deck builder with list of cards.
 
         Args:
@@ -28,12 +29,7 @@ class DeckBuilder(ABC):
         self.cards = list(cards)
         self.hidden = hidden
 
-        config = load_config()
-        if custom_back:
-            self.card_back_url = config['DECK']['CUSTOM_CARDBACK_URL']
-
-        else:
-            self.card_back_url = config['DECK']['DEFAULT_CARDBACK_URL']
+        self.card_back_url = custom_back_url or config['DECK']['DEFAULT_CARDBACK_URL']
 
     @abstractmethod
     def create_deck(self) -> dict:

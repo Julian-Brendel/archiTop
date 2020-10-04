@@ -2,10 +2,10 @@
 from collections import OrderedDict
 from copy import deepcopy
 
-from base_classes import DeckBuilder
-from resources import (card_asset_template, card_deck_template,
-                       card_template)
-from scryfall.data_types import ScryfallCard
+from archiTop.base_classes import DeckBuilder
+from archiTop.resources import (card_asset_template, card_deck_template,
+                                card_template)
+from archiTop.scryfall.data_types import ScryfallCard
 
 
 class MultiCardDeckBuilder(DeckBuilder):
@@ -18,7 +18,6 @@ class MultiCardDeckBuilder(DeckBuilder):
         self.deck_ids = []
         self.custom_deck = OrderedDict()
         super().__init__(*args)
-
 
     def __repr__(self):
         unique_cards = len(set(self.deck_ids))
