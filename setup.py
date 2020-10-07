@@ -2,14 +2,15 @@ from setuptools import setup, find_packages
 
 setup(
         name='ArchiTop',
-        version='0.1.6',
+        version='0.2.1',
         author='Julian Brendel',
         author_email='julian.brendel@t-online.de',
         packages=find_packages(),
-        url='http://pypi.python.org/pypi/PackageName/',
+        url='https://github.com/Julian-Brendel/archiTop',
         license='LICENSE',
         description='Archidekt to TableTop export cli',
         long_description=open('README.md').read(),
+        long_description_content_type='text/markdown',
         python_requires='>=3.8',
         install_requires=[
                 "requests >= 2.24"

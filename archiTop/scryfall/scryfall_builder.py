@@ -12,12 +12,12 @@ from archiTop.scryfall.scryfall_loader import (load_scryfall_name_index,
 class ScryfallDeckBuilder:
 
     def __init__(self, raw_deck: RawDeck):
+        syncronize_scryfall_data()
+
         # load index to search by name and scryfall id
         self.name_index = load_scryfall_name_index()
         self.set_name_index = load_scryfall_set_name_index()
         self.raw_deck = raw_deck
-
-        syncronize_scryfall_data()
 
     def construct_deck(self) -> ScryfallDeck:
         cards, tokens = self._get_scryfall_cards_for_deck()

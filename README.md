@@ -25,26 +25,23 @@ This tool converts an Archidekt deck into Tabletop Simulator json format, able t
 The cards contained, deck-name and thumbnail will be extracted for given Archidekt deck-id. 
 
 ## Installation
-This project requires python 3.8 or greater, mainly because the walrus operator was used across the codebase. 
-[Pipenv](https://pypi.org/project/pipenv/) is used to manage dependencies.
-
-Install all dependencies using
-`pipenv install`
+The package is being hosted in PyPy, install using
+`pip install architop`
 
 ## Usage
 The tool is used via the commandline, runnable with
-`python archiTop <deckID>`
+`archiTop <deckID>`
 
-Additional usage information can be acquired via the command
-`python archiTop -h`
+Additional usage information can be acquired via the help command
+`archiTop -h`
 
 ### Example
 Let's take one of my decks as example.
 Exporting the deck https://archidekt.com/decks/94674#Maximum_Borkdrive is as simple as copying the deck-id
 In this case `94674`
 
-By running the tool with the given deck-id:
-`python archiDekt 94674`, archiTop will export the deck as TableTop Simulator compatible file, alongside the thumbnail used for the deck in Archidekt.
+By running the tool with the given deck-id:  
+`archiDekt 94674`, archiTop will export the deck as TableTop Simulator compatible file, alongside the thumbnail used for the deck in Archidekt.
 
 Both files created will be named accordingly to the deck name in Archidekt:
 ![Output Example](https://archi-top.s3.eu-west-2.amazonaws.com/architop-output-example.png)
