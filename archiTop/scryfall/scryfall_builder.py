@@ -4,7 +4,9 @@ from typing import List, Tuple
 
 from archiTop.data_types import RawCard, RawDeck
 from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
-from archiTop.scryfall.scryfall_loader import load_scryfall_name_index, load_scryfall_set_name_index
+from archiTop.scryfall.scryfall_loader import (load_scryfall_name_index,
+                                               load_scryfall_set_name_index,
+                                               syncronize_scryfall_data)
 
 
 class ScryfallDeckBuilder:
@@ -14,6 +16,8 @@ class ScryfallDeckBuilder:
         self.name_index = load_scryfall_name_index()
         self.set_name_index = load_scryfall_set_name_index()
         self.raw_deck = raw_deck
+
+        syncronize_scryfall_data()
 
     def construct_deck(self) -> ScryfallDeck:
         cards, tokens = self._get_scryfall_cards_for_deck()
