@@ -1,8 +1,13 @@
 """Sourcefile containing class to interact with archidekt services"""
 from typing import List
 
-from archiTop.base_classes import DeckFetcher
+import requests
+
+from archiTop.base_classes import DechFetcherError, DeckFetcher
+from archiTop.config import getLogger
 from archiTop.data_types import RawCard
+
+logger = getLogger(__name__)
 
 
 class ArchidektFetcher(DeckFetcher):
@@ -27,6 +32,20 @@ class ArchidektFetcher(DeckFetcher):
         commander = card['category'] == 'Commander' or 'Commander' in card.get('categories', ())
 
         return RawCard(name, quantity, edition_code, commander)
+
+    @staticmethod
+    def _handle_raw_deck_request(request):
+        try:
+            request.raise_for_status()
+
+        except requests.HTTPError as e:
+            try:
+                error_message = request.json()['error']
+
+            except Exception:
+                error_message = e
+
+            raise DechFetcherError(f'Failed to fetch archidekt deck with error:\n{error_message}')
 
     @staticmethod
     def _parse_card_data(raw_deck_data: dict) -> List[dict]:
