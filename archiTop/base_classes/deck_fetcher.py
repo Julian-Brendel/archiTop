@@ -11,6 +11,10 @@ from archiTop.data_types import RawCard, RawDeck
 logger = getLogger(__name__)
 
 
+class DechFetcherError(Exception):
+    pass
+
+
 class DeckFetcher(ABC):
     """Abstract baseclass to for deck fetcher"""
     base_url = None
@@ -28,14 +32,18 @@ class DeckFetcher(ABC):
         total_count = reduce(lambda a, b: a + b.quantity, self.mainboard_cards, 0)
         return f'DeckFetcher({total_count} total cards, {len(self.mainboard_cards)} unique cards)'
 
-    def _get_raw_deck_data(self) -> dict:
+    def _request_raw_deck(self) -> requests.Response:
         """Fetch the deck information by querying base_url combined with the deckID.
 
         Returns:
             Deck information in json format
         """
         logger.debug('Downloading deck <%s>', self.deck_id)
-        return requests.get(self.base_url % self.deck_id).json()
+        return requests.get(self.base_url % self.deck_id)
+
+    @staticmethod
+    def _parse_raw_deck_data(request: requests.Response) -> dict:
+        return request.json()
 
     def get_deck(self) -> RawDeck:
         """Fetches and parses deck information.
@@ -43,7 +51,11 @@ class DeckFetcher(ABC):
         Returns:
             Deck of cards, containing deck information fetched
         """
-        raw_deck_data = self._get_raw_deck_data()
+        raw_deck_response = self._request_raw_deck()
+
+        self._handle_raw_deck_request(raw_deck_response)
+
+        raw_deck_data = self._parse_raw_deck_data(raw_deck_response)
 
         deck_name = self._parse_deck_name(raw_deck_data)
         thumbnail_url = self._parse_deck_thumbnail_url(raw_deck_data)
@@ -57,7 +69,7 @@ class DeckFetcher(ABC):
                                 filtered_mainboard_card_data]
 
         return RawDeck(self.mainboard_cards, deck_name, thumbnail)
-
+    
     @abstractmethod
     def _parse_single_card(self, card: dict) -> RawCard:
         """Abstractmethod to be implemented by child class.
@@ -69,6 +81,11 @@ class DeckFetcher(ABC):
         Returns:
             Card class containing parsed information from card json object
         """
+        raise NotImplemented
+    
+    @staticmethod
+    @abstractmethod
+    def _handle_raw_deck_request(request: requests.Response):
         raise NotImplemented
 
     @staticmethod
