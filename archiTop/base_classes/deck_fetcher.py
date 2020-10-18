@@ -11,7 +11,8 @@ from archiTop.data_types import RawCard, RawDeck
 logger = getLogger(__name__)
 
 
-class DechFetcherError(Exception):
+class DeckFetcherError(Exception):
+    """Exception to raise when an error was encountered during deck fetching"""
     pass
 
 
@@ -87,7 +88,13 @@ class DeckFetcher(ABC):
 
     @staticmethod
     @abstractmethod
-    def _handle_raw_deck_request(request: requests.Response):
+    def _handle_raw_deck_request(response: requests.Response):
+        """Abstractmethod to be implemented by child class.
+        Validates whether request to server was successful.
+
+        Args:
+            response:   Response from server request
+        """
         raise NotImplemented
 
     @staticmethod
@@ -123,6 +130,7 @@ class DeckFetcher(ABC):
     def _parse_deck_thumbnail_url(raw_deck_data: dict) -> str:
         """Abstractmethod to be implemented by child class.
         Parses thumbnail url from deck data fetched by `_get_raw_deck_data()`.
+
         Args:
             raw_deck_data:  Raw server data fetched by deck data request
 
@@ -133,12 +141,13 @@ class DeckFetcher(ABC):
 
     @staticmethod
     @abstractmethod
-    def _validate_single_card_mainboard(card: dict, mainboard_identifier) -> bool:
+    def _validate_single_card_mainboard(card: dict, mainboard_identifier: Any) -> bool:
         """Abstractmethod to be implemented by child class.
-        Validates whether a single card belongs to mainboard.
+        Validates whether a single card belongs to mainboard using the passed mainboard_identifier.
 
         Args:
-            card:   Card json object contained in fetched deck information
+            card:                   Card json object contained in fetched deck information
+            mainboard_identifier:   Identifier to validate card belongs to mainboard
 
         Returns:
             True when card is contained in mainboard, False otherwise
@@ -148,4 +157,13 @@ class DeckFetcher(ABC):
     @staticmethod
     @abstractmethod
     def _parse_mainboard_identifier(raw_deck_data: dict) -> Any:
+        """Abstractmethod to be implemented by child class.
+        Parses the identifier for mainboard cards from raw data fetched.
+
+        Args:
+            raw_deck_data:      Raw data fetched from server
+
+        Returns:
+            Identifier object
+        """
         raise NotImplemented
