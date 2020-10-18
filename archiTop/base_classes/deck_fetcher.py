@@ -1,7 +1,7 @@
 """Sourcefile containing class fetching deck information"""
 from abc import ABC, abstractmethod
 from functools import reduce
-from typing import List
+from typing import Any, List
 
 import requests
 
@@ -62,14 +62,16 @@ class DeckFetcher(ABC):
 
         thumbnail = requests.get(thumbnail_url).content
 
-        filtered_mainboard_card_data = list(filter(self._validate_single_card_mainboard,
-                                                   self._parse_card_data(raw_deck_data)))
+        mainboard_identifier = self._parse_mainboard_identifier(raw_deck_data)
+        filtered_mainboard_card_data = [
+                card for card in self._parse_card_data(raw_deck_data)
+                if self._validate_single_card_mainboard(card, mainboard_identifier)]
 
         self.mainboard_cards = [self._parse_single_card(card) for card in
                                 filtered_mainboard_card_data]
 
         return RawDeck(self.mainboard_cards, deck_name, thumbnail)
-    
+
     @abstractmethod
     def _parse_single_card(self, card: dict) -> RawCard:
         """Abstractmethod to be implemented by child class.
@@ -82,7 +84,7 @@ class DeckFetcher(ABC):
             Card class containing parsed information from card json object
         """
         raise NotImplemented
-    
+
     @staticmethod
     @abstractmethod
     def _handle_raw_deck_request(request: requests.Response):
@@ -131,7 +133,7 @@ class DeckFetcher(ABC):
 
     @staticmethod
     @abstractmethod
-    def _validate_single_card_mainboard(card: dict) -> bool:
+    def _validate_single_card_mainboard(card: dict, mainboard_identifier) -> bool:
         """Abstractmethod to be implemented by child class.
         Validates whether a single card belongs to mainboard.
 
@@ -141,4 +143,9 @@ class DeckFetcher(ABC):
         Returns:
             True when card is contained in mainboard, False otherwise
         """
+        raise NotImplemented
+
+    @staticmethod
+    @abstractmethod
+    def _parse_mainboard_identifier(raw_deck_data: dict) -> Any:
         raise NotImplemented

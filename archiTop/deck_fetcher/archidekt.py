@@ -1,5 +1,5 @@
 """Sourcefile containing class to interact with archidekt services"""
-from typing import List
+from typing import Any, List
 
 import requests
 
@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 class ArchidektFetcher(DeckFetcher):
     """ArchidektFetcher class, implementing abstract baseclass DeckFetcher"""
     base_url = 'https://archidekt.com/api/decks/%s/small/'
-
+    
     def _parse_single_card(self, card: dict) -> RawCard:
         """Parses single card information from deck service into Card object.
 
@@ -83,7 +83,13 @@ class ArchidektFetcher(DeckFetcher):
         return raw_deck_data['featured']
 
     @staticmethod
-    def _validate_single_card_mainboard(card: dict) -> bool:
+    def _parse_mainboard_identifier(raw_deck_data: dict) -> Any:
+        valid_categories = {category['name'] for category in raw_deck_data['categories']
+                            if category['includedInDeck']}
+        return valid_categories - {'Sideboard'}
+
+    @staticmethod
+    def _validate_single_card_mainboard(card: dict, mainboard_identifier: Any) -> bool:
         """Validates whether a single card belongs to mainboard.
 
         Args:
@@ -92,9 +98,8 @@ class ArchidektFetcher(DeckFetcher):
         Returns:
             True when card is contained in mainboard, False otherwise
         """
-        blacklist = ('Maybeboard', 'Sideboard')
-        category_check = card['category'] not in blacklist
-        categories_checks = not any([blacklist_entry in card.get('categories', ())
-                                     for blacklist_entry in blacklist])
+        # return category_check and categories_checks
+        category = card['categories'][0] if len(card['categories']) > 0 else None
 
-        return category_check and categories_checks
+        return category in mainboard_identifier
+
