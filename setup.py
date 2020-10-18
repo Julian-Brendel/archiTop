@@ -13,7 +13,8 @@ setup(
         long_description_content_type='text/markdown',
         python_requires='>=3.8',
         install_requires=[
-                "requests >= 2.24"
+                "requests >= 2.24",
+                "logging-spinner >= 0.2.2"
         ],
         entry_points={
                 'console_scripts': ['archiTop=archiTop.__main__:main']

@@ -5,10 +5,10 @@ from typing import Any, List
 
 import requests
 
-from archiTop.config import getLogger
+from archiTop.config import get_spin_logger
 from archiTop.data_types import RawCard, RawDeck
 
-logger = getLogger(__name__)
+spin_logger = get_spin_logger(__name__)
 
 
 class DeckFetcherError(Exception):
@@ -39,8 +39,10 @@ class DeckFetcher(ABC):
         Returns:
             Deck information in json format
         """
-        logger.debug('Downloading deck <%s>', self.deck_id)
-        return requests.get(self.base_url % self.deck_id)
+        spin_logger.debug('Downloading deck <%s>', self.deck_id, extra={'user_waiting': True})
+        response = requests.get(self.base_url % self.deck_id)
+        spin_logger.debug('Downloaded deck <%s>', self.deck_id, extra={'user_waiting': False})
+        return response
 
     @staticmethod
     def _parse_raw_deck_data(request: requests.Response) -> dict:

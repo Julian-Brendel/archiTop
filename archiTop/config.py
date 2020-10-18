@@ -2,6 +2,8 @@ import configparser
 import logging
 from pathlib import Path
 
+from logging_spinner import SpinnerHandler
+
 
 def load_config():
     """Creates config-parser, reading the config and returning the read config
@@ -14,20 +16,15 @@ def load_config():
     return config
 
 
-def setup_logging():
-    logger = logging.getLogger('archiTop')
+def setup_spin_logging():
+    logger = logging.getLogger('archiTop_spin')
     logger.setLevel(load_config()['APP']['LOG_LEVEL'])
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-
-    # Attach stdout handler to logger (log to console)
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    logger.addHandler(SpinnerHandler())
 
 
-def getLogger(name: str):
-    return logging.getLogger('archiTop.' + name)
+def get_spin_logger(name: str):
+    return logging.getLogger('archiTop_spin.' + name)
 
 
 PACKAGE_ROOT_PATH = Path(__file__).parent
-setup_logging()
+setup_spin_logging()
