@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from archiTop.config import PACKAGE_ROOT_PATH, getLogger, load_config
+from archiTop.config import PACKAGE_ROOT_PATH, get_spin_logger, load_config
 
-logger = getLogger(__name__)
+spin_logger = get_spin_logger(__name__)
 conf = load_config()['SCRYFALL']
 resources_path = Path(PACKAGE_ROOT_PATH, 'resources')
 

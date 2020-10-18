@@ -4,6 +4,9 @@ import argparse
 from archiTop.scryfall import ScryfallDeckBuilder
 from archiTop.deck_builder import DeckBuilderWrapper
 from archiTop.deck_fetcher import ArchidektFetcher
+from archiTop.config import get_spin_logger
+
+spin_logger = get_spin_logger(__name__)
 
 
 def setup_argparse():
@@ -38,3 +41,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

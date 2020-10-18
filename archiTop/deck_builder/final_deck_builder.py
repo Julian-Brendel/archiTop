@@ -5,13 +5,13 @@ from copy import deepcopy
 from pathlib import Path
 from typing import List, Optional
 
-from archiTop.config import getLogger, load_config
+from archiTop.config import get_spin_logger, load_config
 from archiTop.deck_builder.multi_card_deck_builder import MultiCardDeckBuilder
 from archiTop.deck_builder.single_card_deck_builder import SingleCardDeckBuilder
 from archiTop.resources import final_deck_template
 from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
 
-logger = getLogger(__name__)
+spin_logger = get_spin_logger(__name__)
 
 
 class DeckBuilderWrapper:
@@ -32,7 +32,8 @@ class DeckBuilderWrapper:
 
         self.deck = deck
         if custom_back_url:
-            logger.debug('Using custom card-back <%s>', custom_back_url)
+            spin_logger.debug('Using custom card-back <%s>', custom_back_url,
+                              extra={'user_waiting': False})
             self.custom_back_url = custom_back_url
 
     def construct_final_deck(self):
@@ -81,24 +82,28 @@ class DeckBuilderWrapper:
         deck_name = f'{self.deck.name}.json'
         thumbnail_name = f'{self.deck.name}.png'
 
+        log_message = f'deck <{self.deck.name}>'
+
         if export_location:
-            logger.debug(f'Saving deck <{self.deck.name}> to passed location {export_location}')
+            log_message += f' to passed location <{export_location}>'
 
         else:
             if sys.platform == 'darwin':  # client is using mac os
-                logger.debug(f'Saving deck <{self.deck.name}> to tabletop location')
+                log_message += ' to tabletop location'
                 table_top_save_location = load_config()['EXPORT']['MAC']
                 export_location = Path(Path.home(), table_top_save_location)
 
             else:
-                logger.debug(f'Saving deck <{self.deck.name}> to current directory')
+                log_message += ' to current directory'
                 export_location = ''
 
+        spin_logger.debug('Saving %s', log_message, extra={'user_waiting': True})
         # save deck json
         json.dump(self.final_deck_json, open(Path(export_location, deck_name), 'w'))
         # save deck thumbnail
         with open(Path(export_location, thumbnail_name), 'wb') as file:
             file.write(self.deck.thumbnail)
+        spin_logger.debug('Saved %s', log_message, extra={'user_waiting': False})
 
     def _construct_card_deck(self, card_list: List[ScryfallCard],
                              hidden=True) -> Optional[dict]:
@@ -120,7 +125,6 @@ class DeckBuilderWrapper:
         elif len(card_list) == 1:
             builder = SingleCardDeckBuilder(card_list, hidden, self.custom_back_url)
         else:
-            logger.warning('Passed card list is empty')
             return None
 
         return builder.create_deck()

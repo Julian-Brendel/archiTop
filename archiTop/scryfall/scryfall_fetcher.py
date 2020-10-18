@@ -3,7 +3,7 @@ import pickle
 
 import requests
 
-from archiTop.scryfall import conf, logger, resources_path
+from archiTop.scryfall import conf, spin_logger, resources_path
 
 
 def _extract_file_name(url: str) -> str:
@@ -28,11 +28,11 @@ def syncronize_scryfall_data():
     current_url = get_bulk_url()
     file_name = _extract_file_name(current_url)
     if not (resources_path / file_name).exists():
-        logger.info('Re-syncing scryfall data...')
+        spin_logger.info('Re-syncing scryfall data', extra={'user_waiting': True})
         # delete outdated scryfall data
         for path in resources_path.glob(conf['BULK_DATA_FILE_PATTERN']):
             path.unlink()
 
         update_scryfall_data(current_url)
 
-        logger.info('Scryfall data is up to date 🎉')
+        spin_logger.info('Scryfall data is up to date 🎉', extra={'user_waiting': False})

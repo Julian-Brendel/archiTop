@@ -2,10 +2,9 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from archiTop.config import getLogger, load_config
+from archiTop.config import load_config
 from archiTop.scryfall.data_types import ScryfallCard
 
-logger = getLogger(__name__)
 config = load_config()
 
 

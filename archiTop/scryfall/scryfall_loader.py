@@ -3,8 +3,7 @@ import pickle
 from functools import lru_cache
 from pathlib import Path
 
-from archiTop.scryfall import conf, logger, resources_path
-from archiTop.scryfall.scryfall_fetcher import syncronize_scryfall_data
+from archiTop.scryfall import conf, spin_logger, resources_path
 
 
 def _get_data_path() -> Path:
@@ -14,8 +13,9 @@ def _get_data_path() -> Path:
 
 @lru_cache
 def _load_scryfall_data(file_path: Path):
-    logger.debug('Loading scryfall data')
+    spin_logger.debug('Loading scryfall data', extra={'user_waiting': True})
     data = pickle.load(file_path.open('rb'))
+    spin_logger.debug('Loaded scryfall data', extra={'user_waiting': False})
     return data
 
 

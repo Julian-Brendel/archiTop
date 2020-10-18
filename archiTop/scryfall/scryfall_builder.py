@@ -4,9 +4,9 @@ from typing import List, Tuple
 
 from archiTop.data_types import RawCard, RawDeck
 from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
+from archiTop.scryfall.scryfall_fetcher import syncronize_scryfall_data
 from archiTop.scryfall.scryfall_loader import (load_scryfall_name_index,
-                                               load_scryfall_set_name_index,
-                                               syncronize_scryfall_data)
+                                               load_scryfall_set_name_index)
 
 
 class ScryfallDeckBuilder:
