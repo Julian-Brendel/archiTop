@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='ArchiTop',
-        version='0.2.2',
+        version='0.2.3',
         author='Julian Brendel',
         author_email='julian.brendel@t-online.de',
         packages=find_packages(),
@@ -17,7 +17,8 @@ setup(
                 "logging-spinner >= 0.2.2"
         ],
         entry_points={
-                'console_scripts': ['archiTop=archiTop.__main__:main']
+                'console_scripts': ['archiTop=archiTop.__main__:main',
+                                    'architop=archiTop.__main__:main']
         },
         include_package_data=True
 )

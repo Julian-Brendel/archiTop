@@ -30,10 +30,10 @@ The package is being hosted in PyPy, install using
 
 ## Usage
 The tool is used via the commandline, runnable with
-`archiTop <deckID>`
+`architop <deckID>`
 
 Additional usage information can be acquired via the help command
-`archiTop -h`
+`architop -h`
 
 ### Example
 Let's take one of my decks as example.
