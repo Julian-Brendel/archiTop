@@ -3,7 +3,7 @@ from typing import List, Set
 
 import requests
 
-from archiTop.base_classes import DeckFetcherError, DeckFetcher
+from archiTop.base_classes import DeckFetcher, DeckFetcherError
 from archiTop.config import getLogger
 from archiTop.data_types import RawCard
 
