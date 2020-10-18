@@ -1,9 +1,9 @@
 """Sourcefile containing class to interact with archidekt services"""
-from typing import List
+from typing import List, Set
 
 import requests
 
-from archiTop.base_classes import DechFetcherError, DeckFetcher
+from archiTop.base_classes import DeckFetcher, DeckFetcherError
 from archiTop.config import getLogger
 from archiTop.data_types import RawCard
 
@@ -34,18 +34,26 @@ class ArchidektFetcher(DeckFetcher):
         return RawCard(name, quantity, edition_code, commander)
 
     @staticmethod
-    def _handle_raw_deck_request(request):
+    def _handle_raw_deck_request(response: requests.Response):
+        """Handles response from archidekt api, validating request was successful.
+
+        Raises:
+            DeckFetcherError: When invalid status code was encountered in response from api
+
+        Args:
+            response:   Response object from archidekt api call
+        """
         try:
-            request.raise_for_status()
+            response.raise_for_status()
 
         except requests.HTTPError as e:
             try:
-                error_message = request.json()['error']
+                error_message = response.json()['error']
 
             except Exception:
                 error_message = e
 
-            raise DechFetcherError(f'Failed to fetch archidekt deck with error:\n{error_message}')
+            raise DeckFetcherError(f'Failed to fetch archidekt deck with error:\n{error_message}')
 
     @staticmethod
     def _parse_card_data(raw_deck_data: dict) -> List[dict]:
@@ -83,18 +91,33 @@ class ArchidektFetcher(DeckFetcher):
         return raw_deck_data['featured']
 
     @staticmethod
-    def _validate_single_card_mainboard(card: dict) -> bool:
+    def _parse_mainboard_identifier(raw_deck_data: dict) -> Set[str]:
+        """Extracts valid categories for cards belonging to mainboard.
+        Archidekt has functionality of marking categories as not included in the deck,
+        these are being filtered out.
+
+        Args:
+            raw_deck_data:      Raw json response data from archidekt api
+
+        Returns:
+            Set containing valid categories
+        """
+        valid_categories = {category['name'] for category in raw_deck_data['categories']
+                            if category['includedInDeck']}
+        return valid_categories - {'Sideboard'}
+
+    @staticmethod
+    def _validate_single_card_mainboard(card: dict, mainboard_identifier: Set[str]) -> bool:
         """Validates whether a single card belongs to mainboard.
 
         Args:
-            card:   Card json object contained in fetched deck information
+            card:                   Card json object contained in fetched deck information
+            mainboard_identifier:   List holding valid mainboard categories
 
         Returns:
             True when card is contained in mainboard, False otherwise
         """
-        blacklist = ('Maybeboard', 'Sideboard')
-        category_check = card['category'] not in blacklist
-        categories_checks = not any([blacklist_entry in card.get('categories', ())
-                                     for blacklist_entry in blacklist])
+        # return category_check and categories_checks
+        category = card['categories'][0] if len(card['categories']) > 0 else None
 
-        return category_check and categories_checks
+        return category in mainboard_identifier
