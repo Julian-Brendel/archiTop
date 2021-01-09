@@ -41,7 +41,6 @@ class ScryfallCard:
                                                    resolve_tokens=False,
                                                    card_side=1)}
 
-
         else:
             raise Exception('Unknown card-type encountered')
 

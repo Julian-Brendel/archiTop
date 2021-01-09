@@ -37,8 +37,7 @@ Additional usage information can be acquired via the help command
 
 ### Example
 Let's take one of my decks as example.
-Exporting the deck https://archidekt.com/decks/94674#Maximum_Borkdrive is as simple as copying the deck-id
-In this case `94674`
+Exporting the deck https://archidekt.com/decks/94674#Maximum_Borkdrive is as simple as copying the deck-id `94674`.
 
 By running the tool with the given deck-id:  
 `archiDekt 94674`, archiTop will export the deck as TableTop Simulator compatible file, alongside the thumbnail used for the deck in Archidekt.

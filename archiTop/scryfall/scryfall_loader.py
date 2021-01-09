@@ -2,6 +2,7 @@
 import pickle
 from functools import lru_cache
 from pathlib import Path
+from typing import Dict
 
 from archiTop.scryfall import conf, spin_logger, resources_path
 
@@ -20,37 +21,11 @@ def _load_scryfall_data(file_path: Path):
 
 
 @lru_cache
-def _load_scryfall_name_index(file_path: Path):
-    data = _load_scryfall_data(file_path)
-    return {entry['name']: entry for entry in data}
-
-
-@lru_cache
-def _load_scryfall_id_index(file_path: Path):
+def _load_scryfall_id_index(file_path: Path) -> Dict[str, Dict]:
     data = _load_scryfall_data(file_path)
     return {entry['id']: entry for entry in data}
 
 
-@lru_cache
-def _load_scryfall_set_name_index(file_path: Path):
-    data = _load_scryfall_data(file_path)
-    index = {}
-    for entry in data:
-        index[entry['set']] = index.get(entry['set'], {})
-        index[entry['set']][entry['name']] = entry
-    return index
-
-
-def load_scryfall_name_index():
-    file_path = _get_data_path()
-    return _load_scryfall_name_index(file_path)
-
-
-def load_scryfall_id_index():
+def load_scryfall_id_index() -> Dict[str, Dict]:
     file_path = _get_data_path()
     return _load_scryfall_id_index(file_path)
-
-
-def load_scryfall_set_name_index():
-    file_path = _get_data_path()
-    return _load_scryfall_set_name_index(file_path)

@@ -23,12 +23,13 @@ class ArchidektFetcher(DeckFetcher):
         card_data = card['card']
 
         name = card_data['oracleCard']['name']
+        uid = card_data['uid']
         quantity = card['quantity']
 
         edition_code = card_data['edition']['editioncode']
         commander = card['category'] == 'Commander' or 'Commander' in card.get('categories', ())
 
-        return RawCard(name, quantity, edition_code, commander)
+        return RawCard(name, quantity, uid, edition_code, commander)
 
     @staticmethod
     def _handle_raw_deck_request(response: requests.Response):
