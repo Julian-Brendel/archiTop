@@ -1,6 +1,6 @@
 """Sourcefile containing functionality to construct scryfall card deck"""
 from functools import reduce
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from archiTop.data_types import RawCard, RawDeck
 from archiTop.scryfall.data_types import ScryfallCard, ScryfallDeck
@@ -10,11 +10,12 @@ from archiTop.scryfall.scryfall_loader import load_scryfall_id_index
 
 class ScryfallDeckBuilder:
 
-    def __init__(self, raw_deck: RawDeck):
+    def __init__(self, raw_deck: RawDeck, altered_cards_index: Dict[str, str]):
         syncronize_scryfall_data()
 
         # load index to search by name and scryfall id
         self.scryfall_id_index = load_scryfall_id_index()
+        self.altered_cards_index = altered_cards_index
         self.raw_deck = raw_deck
 
     def construct_deck(self) -> ScryfallDeck:
@@ -35,6 +36,8 @@ class ScryfallDeckBuilder:
 
     def _create_scryfall_card(self, card: RawCard) -> ScryfallCard:
         scryfall_data = self.scryfall_id_index[card.uid]
+        altered_url = self.altered_cards_index.get(card.name)
         return ScryfallCard(scryfall_data,
                             quantity=card.quantity,
-                            commander=card.commander)
+                            commander=card.commander,
+                            altered_url=altered_url)
