@@ -35,7 +35,7 @@ The tool is used via the commandline, runnable with
 Additional usage information can be acquired via the help command
 `architop -h`
 
-### Example
+## Example Usage
 Let's take one of my decks as example.
 Exporting the deck https://archidekt.com/decks/94674#Maximum_Borkdrive is as simple as copying the deck-id `94674`.
 
@@ -51,8 +51,24 @@ The directory can vary for your Tabletop installation, based on OS.
 You can find the path via the Tabletop Simulator game configurations:
 ![Tabletop Objects](https://archi-top.s3.eu-west-2.amazonaws.com/tabletop-save-location.png)
 
-All that's left to do now is move the two files to the mod save location, in my case
-`~/Library/Tabletop\ Simulator/Saves/Saved\ Objects/`
+
+## Use of altered cards
+You can optionally configure the tool to load alternate art versions of cards, by executing architop with the `-a` option:  
+`architop <deckId> -a <path to .json file>`
+
+The altered art json file, follows the format below:
+```json
+example_altered_cards.json
+{
+  "Pyroblast": "https://architop-altered.s3.eu-west-2.amazonaws.com/Pyroblast.png",
+  "Red Elemental Blast": "https://architop-altered.s3.eu-west-2.amazonaws.com/Red+Elemental+Blast.png",
+  "Aetherflux Reservoir": "https://architop-altered.s3.eu-west-2.amazonaws.com/Aetherflux+Reservoir.png",
+  "Chaos Warp": "https://architop-altered.s3.eu-west-2.amazonaws.com/Chaos+Warp.png",
+  "Dockside Extortionist": "https://architop-altered.s3.eu-west-2.amazonaws.com/Dockside+Extortionist.png",
+  "Sol Ring": "https://architop-altered.s3.eu-west-2.amazonaws.com/Sol+Ring.png"
+}
+```
+
 
 Have fun playing 🎉
  

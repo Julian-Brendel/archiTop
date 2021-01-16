@@ -14,7 +14,8 @@ class ScryfallCard:
                  resolve_tokens=True,
                  quantity=1,
                  commander=False,
-                 card_side=0):
+                 card_side=0,
+                 altered_url: str = None):
         self.id_index = load_scryfall_id_index()
 
         self.commander = commander
@@ -29,25 +30,29 @@ class ScryfallCard:
 
         self.id = scryfall_card_data['id']
 
-        if 'image_uris' in scryfall_card_data:
-            # extract image_url, choosing high rez if available
-            image_uris = scryfall_card_data['image_uris']
-
-        elif 'card_faces' in scryfall_card_data:  # card is a double sized card
-            image_uris = scryfall_card_data['card_faces'][card_side]['image_uris']
-
-            if card_side == 0:
-                self.related_cards = {ScryfallCard(self.id_index[scryfall_card_data['id']],
-                                                   resolve_tokens=False,
-                                                   card_side=1)}
+        if altered_url:
+            self.image_url = altered_url
 
         else:
-            raise Exception('Unknown card-type encountered')
+            if 'image_uris' in scryfall_card_data:
+                # extract image_url, choosing high rez if available
+                image_uris = scryfall_card_data['image_uris']
 
-        if 'large' in image_uris:
-            self.image_url = image_uris['large']
-        else:
-            self.image_url = image_uris['normal']
+            elif 'card_faces' in scryfall_card_data:  # card is a double sized card
+                image_uris = scryfall_card_data['card_faces'][card_side]['image_uris']
+
+                if card_side == 0:
+                    self.related_cards = {ScryfallCard(self.id_index[scryfall_card_data['id']],
+                                                       resolve_tokens=False,
+                                                       card_side=1)}
+
+            else:
+                raise Exception('Unknown card-type encountered')
+
+            if 'large' in image_uris:
+                self.image_url = image_uris['large']
+            else:
+                self.image_url = image_uris['normal']
 
         if resolve_tokens:
             related_objects = scryfall_card_data.get('all_parts', ())

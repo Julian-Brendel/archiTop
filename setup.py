@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='ArchiTop',
-        version='0.2.4',
+        version='0.2.5',
         author='Julian Brendel',
         author_email='julian.brendel@t-online.de',
         packages=find_packages(),
