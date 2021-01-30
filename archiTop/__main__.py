@@ -4,7 +4,7 @@ import json
 
 from archiTop.config import get_spin_logger
 from archiTop.deck_builder import DeckBuilderWrapper
-from archiTop.deck_fetcher import ArchidektFetcher
+from archiTop.deck_fetcher import ArchidektFetcher, MoxfieldFetcher
 from archiTop.scryfall import ScryfallDeckBuilder
 
 spin_logger = get_spin_logger(__name__)
@@ -28,8 +28,13 @@ def setup_argparse():
 def main():
     args = setup_argparse()
 
-    # fetch raw deck information (card names and count)
-    deck = ArchidektFetcher(args.deckID).get_deck()
+    # decide which service to request deck from
+    if args.deckID.isnumeric():
+        spin_logger.debug('Fetching Archidekt deck', extra={'user_waiting': False})
+        deck = ArchidektFetcher(args.deckID).get_deck()
+    else:
+        spin_logger.debug('Fetching Moxfield deck', extra={'user_waiting': False})
+        deck = MoxfieldFetcher(args.deckID).get_deck()
 
     # overwrite deckname if optional argument is specified
     deck.name = args.name if args.name else deck.name
