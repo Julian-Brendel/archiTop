@@ -101,8 +101,9 @@ class DeckBuilderWrapper:
         # save deck json
         json.dump(self.final_deck_json, open(Path(export_location, deck_name), 'w'))
         # save deck thumbnail
-        with open(Path(export_location, thumbnail_name), 'wb') as file:
-            file.write(self.deck.thumbnail)
+        if self.deck.thumbnail:
+            with open(Path(export_location, thumbnail_name), 'wb') as file:
+                file.write(self.deck.thumbnail)
         spin_logger.debug('Saved %s', log_message, extra={'user_waiting': False})
 
     def _construct_card_deck(self, card_list: List[ScryfallCard],

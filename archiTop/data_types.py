@@ -9,11 +9,10 @@ class RawCard:
     name: str                   # unique card name
     quantity: int               # quantity for card
     uid: str                    # unique card identifier
-    editioncode: str = None     # edition code for card
     commander: bool = False     # flag whether card is commander
 
     def __repr__(self):
-        return f'RawCard({self.quantity: <3}x {self.name} - {self.editioncode} - {self.uid})'
+        return f'RawCard({self.quantity: <3}x {self.name} - {self.uid})'
 
 
 @dataclass
