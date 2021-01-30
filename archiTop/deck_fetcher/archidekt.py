@@ -11,7 +11,8 @@ class ArchidektFetcher(DeckFetcher):
     """ArchidektFetcher class, implementing abstract baseclass DeckFetcher"""
     base_url = 'https://archidekt.com/api/decks/%s/small/'
 
-    def _parse_single_card(self, card: dict) -> RawCard:
+    @staticmethod
+    def _parse_single_card(card: dict) -> RawCard:
         """Parses single card information from deck service into Card object.
 
         Args:
@@ -26,13 +27,12 @@ class ArchidektFetcher(DeckFetcher):
         uid = card_data['uid']
         quantity = card['quantity']
 
-        edition_code = card_data['edition']['editioncode']
         commander = card['category'] == 'Commander' or 'Commander' in card.get('categories', ())
 
-        return RawCard(name, quantity, uid, edition_code, commander)
+        return RawCard(name, quantity, uid, commander)
 
     @staticmethod
-    def _handle_raw_deck_request(response: requests.Response):
+    def _handle_response(response: requests.Response):
         """Handles response from archidekt api, validating request was successful.
 
         Raises:
@@ -54,18 +54,6 @@ class ArchidektFetcher(DeckFetcher):
             raise DeckFetcherError(f'Failed to fetch archidekt deck with error:\n{error_message}')
 
     @staticmethod
-    def _parse_card_data(raw_deck_data: dict) -> List[dict]:
-        """Parses card information from deck data fetched by `_get_raw_deck_data()`.
-
-        Args:
-            raw_deck_data:  Raw server data fetched by deck data request
-
-        Returns:
-            List of card json objects contained in deck
-        """
-        return raw_deck_data['cards']
-
-    @staticmethod
     def _parse_deck_name(raw_deck_data: dict) -> str:
         """Parses deck name from deck data fetched by `_get_raw_deck_data()`.
 
@@ -78,7 +66,7 @@ class ArchidektFetcher(DeckFetcher):
         return raw_deck_data['name']
 
     @staticmethod
-    def _parse_deck_thumbnail_url(raw_deck_data: dict) -> str:
+    def _get_thumbnail(raw_deck_data: dict) -> bytes:
         """Parses thumbnail url from deck data fetched by `_get_raw_deck_data()`.
         Args:
             raw_deck_data:  Raw server data fetched by deck data request
@@ -86,26 +74,22 @@ class ArchidektFetcher(DeckFetcher):
         Returns:
             Thumbnail url for fetched deck information
         """
-        return raw_deck_data['featured']
+        url = raw_deck_data['featured']
+        return requests.get(url).content
+
+    def _parse_mainboard_cards(self, data: dict) -> List[RawCard]:
+        # identify categories for all valid mainboard cards
+        valid_categories = {category['name'] for category in data['categories']
+                            if category['includedInDeck']} - {'Sideboard'}
+
+        mainboard_cards = [card for card in data['cards']
+         if self._validate_mainboard_cards(card, valid_categories)]
+
+        return [self._parse_single_card(card) for card in mainboard_cards]
+
 
     @staticmethod
-    def _parse_mainboard_identifier(raw_deck_data: dict) -> Set[str]:
-        """Extracts valid categories for cards belonging to mainboard.
-        Archidekt has functionality of marking categories as not included in the deck,
-        these are being filtered out.
-
-        Args:
-            raw_deck_data:      Raw json response data from archidekt api
-
-        Returns:
-            Set containing valid categories
-        """
-        valid_categories = {category['name'] for category in raw_deck_data['categories']
-                            if category['includedInDeck']}
-        return valid_categories - {'Sideboard'}
-
-    @staticmethod
-    def _validate_single_card_mainboard(card: dict, mainboard_identifier: Set[str]) -> bool:
+    def _validate_mainboard_cards(card: dict, mainboard_categories: Set[str]) -> bool:
         """Validates whether a single card belongs to mainboard.
 
         Args:
@@ -118,4 +102,4 @@ class ArchidektFetcher(DeckFetcher):
         # return category_check and categories_checks
         category = card['categories'][0] if len(card['categories']) > 0 else None
 
-        return category in mainboard_identifier
+        return category in mainboard_categories

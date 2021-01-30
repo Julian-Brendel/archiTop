@@ -19,7 +19,7 @@ class DeckFetcherError(Exception):
 class DeckFetcher(ABC):
     """Abstract baseclass to for deck fetcher"""
     base_url = None
-    mainboard_cards = []
+    mainboard_cards: List[RawCard] = []
 
     def __init__(self, deck_id: int):
         """Initializes deck fetcher with id of deck.
@@ -45,7 +45,7 @@ class DeckFetcher(ABC):
         return response
 
     @staticmethod
-    def _parse_raw_deck_data(request: requests.Response) -> dict:
+    def _parse_data(request: requests.Response) -> dict:
         return request.json()
 
     def get_deck(self) -> RawDeck:
@@ -55,61 +55,28 @@ class DeckFetcher(ABC):
             Deck of cards, containing deck information fetched
         """
         raw_deck_response = self._request_raw_deck()
+        self._handle_response(raw_deck_response)
 
-        self._handle_raw_deck_request(raw_deck_response)
+        data = self._parse_data(raw_deck_response)
+        deck_name = self._parse_deck_name(data)
+        thumbnail = self._get_thumbnail(data)
 
-        raw_deck_data = self._parse_raw_deck_data(raw_deck_response)
-
-        deck_name = self._parse_deck_name(raw_deck_data)
-        thumbnail_url = self._parse_deck_thumbnail_url(raw_deck_data)
-
-        thumbnail = requests.get(thumbnail_url).content
-
-        mainboard_identifier = self._parse_mainboard_identifier(raw_deck_data)
-        filtered_mainboard_card_data = [
-                card for card in self._parse_card_data(raw_deck_data)
-                if self._validate_single_card_mainboard(card, mainboard_identifier)]
-
-        self.mainboard_cards = [self._parse_single_card(card) for card in
-                                filtered_mainboard_card_data]
+        self.mainboard_cards = self._parse_mainboard_cards(data)
 
         return RawDeck(self.mainboard_cards, deck_name, thumbnail)
 
     @abstractmethod
-    def _parse_single_card(self, card: dict) -> RawCard:
-        """Abstractmethod to be implemented by child class.
-        Parses single card information from deck service into Card object.
-
-        Args:
-            card:   Card json object to parse information from
-
-        Returns:
-            Card class containing parsed information from card json object
-        """
+    def _parse_mainboard_cards(self, data: dict) -> List[RawCard]:
         raise NotImplemented
 
     @staticmethod
     @abstractmethod
-    def _handle_raw_deck_request(response: requests.Response):
+    def _handle_response(response: requests.Response):
         """Abstractmethod to be implemented by child class.
         Validates whether request to server was successful.
 
         Args:
             response:   Response from server request
-        """
-        raise NotImplemented
-
-    @staticmethod
-    @abstractmethod
-    def _parse_card_data(raw_deck_data: dict) -> List[dict]:
-        """Abstractmethod to be implemented by child class.
-        Parses card information from deck data fetched by `_get_raw_deck_data()`.
-
-        Args:
-            raw_deck_data:  Raw server data fetched by deck data request
-
-        Returns:
-            List of card json objects contained in deck
         """
         raise NotImplemented
 
@@ -129,7 +96,7 @@ class DeckFetcher(ABC):
 
     @staticmethod
     @abstractmethod
-    def _parse_deck_thumbnail_url(raw_deck_data: dict) -> str:
+    def _get_thumbnail(raw_deck_data: dict) -> bytes:
         """Abstractmethod to be implemented by child class.
         Parses thumbnail url from deck data fetched by `_get_raw_deck_data()`.
 
@@ -138,34 +105,5 @@ class DeckFetcher(ABC):
 
         Returns:
             Thumbnail url for fetched deck information
-        """
-        raise NotImplemented
-
-    @staticmethod
-    @abstractmethod
-    def _validate_single_card_mainboard(card: dict, mainboard_identifier: Any) -> bool:
-        """Abstractmethod to be implemented by child class.
-        Validates whether a single card belongs to mainboard using the passed mainboard_identifier.
-
-        Args:
-            card:                   Card json object contained in fetched deck information
-            mainboard_identifier:   Identifier to validate card belongs to mainboard
-
-        Returns:
-            True when card is contained in mainboard, False otherwise
-        """
-        raise NotImplemented
-
-    @staticmethod
-    @abstractmethod
-    def _parse_mainboard_identifier(raw_deck_data: dict) -> Any:
-        """Abstractmethod to be implemented by child class.
-        Parses the identifier for mainboard cards from raw data fetched.
-
-        Args:
-            raw_deck_data:      Raw data fetched from server
-
-        Returns:
-            Identifier object
         """
         raise NotImplemented
