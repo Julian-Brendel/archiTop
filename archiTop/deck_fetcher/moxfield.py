@@ -11,7 +11,10 @@ from archiTop.scryfall import load_scryfall_id_index
 class MoxfieldFetcher(DeckFetcher):
     """MoxfieldFetcher class, implementing abstract baseclass DeckFetcher"""
     base_url = ' https://api.moxfield.com/v2/decks/all/%s'
-    scryfall_id_index = load_scryfall_id_index()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scryfall_id_index = load_scryfall_id_index()
 
     @staticmethod
     def _parse_card(data: dict, commander: bool = False) -> RawCard:
