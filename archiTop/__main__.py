@@ -5,7 +5,7 @@ import json
 from archiTop.config import get_spin_logger
 from archiTop.deck_builder import DeckBuilderWrapper
 from archiTop.deck_fetcher import ArchidektFetcher, MoxfieldFetcher
-from archiTop.scryfall import ScryfallDeckBuilder
+from archiTop.scryfall import ScryfallDeckBuilder, syncronize_scryfall_data
 
 spin_logger = get_spin_logger(__name__)
 
@@ -27,6 +27,9 @@ def setup_argparse():
 
 def main():
     args = setup_argparse()
+
+    # ensure scryfall data is up to date
+    syncronize_scryfall_data()
 
     # decide which service to request deck from
     if args.deckID.isnumeric():
